@@ -1,28 +1,39 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+<template lang="html">
+  <div>
+      <h1>Films</h1>
+      <film-filter-form :films="films" />
+      <film-detail v-if="selectedFilm" :film="selectedFilm"/>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import FilmFilterForm from './components/FilmFilterForm.vue'
+import FilmDetail from './components/FilmDetail.vue'
+import {eventBus} from './main.js';
 
 export default {
-  name: 'App',
+  data(){
+    return {
+    films: [],
+    selectedFilm: null
+    }
+  },
   components: {
-    HelloWorld
+    "film-filter-form": FilmFilterForm,
+    "film-detail": FilmDetail
+  },
+  mounted(){
+    fetch('https://swapi.dev/api/films/')
+    .then(results => results.json())
+    .then(data => this.films = data.results)
+
+    eventBus.$on('film-selected', (film) => {
+  this.selectedFilm = film
+})
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="css" scoped>
 </style>
